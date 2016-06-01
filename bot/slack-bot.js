@@ -1,9 +1,14 @@
+'use strict';
 const RtmClient = require('@slack/client').RtmClient;
 const MemoryDataStore = require('@slack/client').MemoryDataStore;
 const RTM_EVENTS = require('@slack/client').RTM_EVENTS;
 const CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
 const loadUserBySlackId = require('./loadUserBySlackId');
 const token = process.env.SLACK_API_TOKEN || '';
+
+const getMessage = require('./messages');
+
+let session = {};
 
 console.log('TOKEN', token)
 const rtm = new RtmClient(token , {
@@ -23,7 +28,12 @@ rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, rtmStartData => {
   console.log(`Logged in as ${rtmStartData.self.name} of team ${rtmStartData.team.name}, but not yet connected to a channel`);
 });
 
-rtm.on(RTM_EVENTS.MESSAGE,(message,test1, test2, test3)  => {
+
+const saveInSession = (userId, messageCode, data) =>  {
+  session[userId] = {userId, lastMessage: messageCode, data}
+}
+
+rtm.on(RTM_EVENTS.MESSAGE, message  => {
 
   //console.log('user', rtm.dataStore.getUserById(message.user).name);
   //console.log('channel', rtm.dataStore.getChannelById(message.channel));
@@ -31,22 +41,42 @@ rtm.on(RTM_EVENTS.MESSAGE,(message,test1, test2, test3)  => {
 
   const user = rtm.dataStore.getUserById(message.user)
   const dm = rtm.dataStore.getDMByName(user.name);
-  //console.log('userId slack', user.id);
-  loadUserBySlackId(user.id).then(u => {
-    console.log('user records', u.records);
-    rtm.sendMessage(
-      `Bonjour ${user.name}, voici test dernières saisies: ${u.records.reduce((prev, current)=> prev + current.project, '')}`,
-       dm.id ,
-       () => {
-        // optionally, you can supply a callback to execute once the message has been sent
-        console.log('Ca marche')
+
+  console.log('Call the API');
+  console.log('test', getMessage('USER_ADD_PROJECTS')(user.name));
+  loadUserBySlackId(user.id).then(usr => {
+    // Le user est dans la base et a au moins un projet
+      if(usr && usr.records && usr.records.length > 0){
+        //console.log('user has a project', usr)
+        rtm.sendMessage(
+          getMessage('LAST_PROJECTS')(usr),
+          dm.id,
+          () => saveInSession(user.id, 'LAST_PROJECTS', usr)
+        );
+      }else {
+        // Le user n'a pas de projet on lui propose d'en ajouter ?
+        //console.log('user no projects', usr)
+        rtm.sendMessage(
+          getMessage('USER_ADD_PROJECTS')(user.name),
+          dm.id,
+          () => saveInSession(user.id, 'USER_ADD_PROJECTS', usr)
+        );
       }
-    );
+
+      // Le user a des projects
+        // Saisie des temps ou projet
+      // Le user n'a pas de projet
+        // Saisie de projet
+    // Le user n'existe pas dans la base
+    // on t'a créé
+    // Le user n'a pas de projet
   }).catch(e => {
-    console.log('err', e);
-    rtm.sendMessage(`Bonjour ${user.name}, tu n'as jamais saisie de temps, et si on essayait?`, dm.id, () => {
-      console.log('user inconnu dans la base, prise de contact initiée'+ user.name);
-    })
+    console.log('Pas de user existant', e)
+    rtm.sendMessage(
+      getMessage('USER_CREATED')(user.name),
+      dm.id,
+      () => saveInSession(user.id, 'USER_CREATED', e)
+    );
   });
 
   // Listens to all `message` events from the team
