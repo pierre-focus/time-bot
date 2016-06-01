@@ -27,6 +27,9 @@ const _validateTimeRecord = timeRecord => {
   if(!timeRecord.duration || typeof timeRecord.duration !== "number"){
     err.timeRecord = `Vous n'avez pas saisie une durée valide pour votre saisie de temps.`
   }
+  if(!timeRecord.date || typeof timeRecord.duration !== "number"){
+    err.date = `Vous n'avez pas saisie une date valide pour votre saisie de temps.`
+  }
   if(!err.hasOwnProperty()){return;}
   return err;
 }
@@ -108,9 +111,15 @@ app.post('/user/:login/time-record', (req, res) => {
   //user
   const user = _findUserByLogin(req.params.login);
   const body = req.body;
-  const record = {project: body.project, duration: body.duration, task: body.task, comment: body.comment, type: body.type};
+  const record = {
+    project: body.project,
+    duration: body.duration,
+    task: body.task,
+    comment: body.comment,
+    type: body.type,
+    date: body.date || new Date().getTime()
+  };
   const errTimeRecord = _validateTimeRecord(record);
-
   if(errTimeRecord){
     res.status(522 ).json(errTimeRecord)
   }else {
