@@ -1,0 +1,6 @@
+[
+  {"name": "Atlas", "tasks": ["UI", "Backend", "Tracking", "JS"]},
+  {"name": "CNC", "tasks": ["UI", "Backend", "Tracking", "JS"]},
+  {"name": "Trackit", "tasks": ["UI", "Backend", "Tracking", "JS"]},
+  {"name": "Chaine", "tasks": ["UI", "Backend", "Tracking", "TS"]}
+]
