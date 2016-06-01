@@ -4,7 +4,9 @@
   "description": "A bot to help you.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "start": "node api",
+    "watch": "nodemon api"
   },
   "repository": {
     "type": "git",
@@ -19,5 +21,13 @@
   "bugs": {
     "url": "https://github.com/get-focus/time-bot/issues"
   },
-  "homepage": "https://github.com/get-focus/time-bot#readme"
+  "homepage": "https://github.com/get-focus/time-bot#readme",
+  "dependencies": {
+    "body-parser": "^1.15.1",
+    "cors": "^2.7.1",
+    "express": "^4.13.4"
+  },
+  "devDependencies": {
+    "nodemon": "^1.9.2"
+  }
 }
