@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors')
 const bodyParser = require('body-parser');
+const startbot = require('./slack-bot');
 const API_PORT = 3000;
 
 // DB utilities
@@ -135,5 +136,5 @@ const launchServer = () => {
         console.log(`API listening on port ${API_PORT}`);
     });
 }
-
+startbot();
 launchServer();
