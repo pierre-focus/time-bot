@@ -1,0 +1,23 @@
+{
+  "name": "time-bot",
+  "version": "0.0.0",
+  "description": "A bot to help you.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/get-focus/time-bot.git"
+  },
+  "keywords": [
+    "bot",
+    "time"
+  ],
+  "author": "Amélie et Pierre",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/get-focus/time-bot/issues"
+  },
+  "homepage": "https://github.com/get-focus/time-bot#readme"
+}
