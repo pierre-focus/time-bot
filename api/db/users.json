@@ -1,5 +1,12 @@
 [
-  {"login": "amelie", "records": []},
+  {
+    "login": "amelie",
+    "records": [{
+      "project": "Atlas mais c'est fini"},{
+      "project": "Focus et c'est l'avenir"
+    }
+  ],
+  "slackId": "U1D81FYRW"},
   {"login": "pierre", "records": []},
   {"login": "bernard","records": []}
 ]

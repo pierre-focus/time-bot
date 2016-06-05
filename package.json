@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "start": "node api",
-    "watch": "nodemon api"
+    "start:api": "node api",
+    "start:bot": "node bot",
+    "watch:api": "nodemon api",
+    "watch:bot": "nodemon bot"
   },
   "repository": {
     "type": "git",
@@ -23,9 +25,11 @@
   },
   "homepage": "https://github.com/get-focus/time-bot#readme",
   "dependencies": {
+    "@slack/client": "^3.4.0",
     "body-parser": "^1.15.1",
     "cors": "^2.7.1",
     "express": "^4.13.4",
+    "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.13.1"
   },
   "devDependencies": {

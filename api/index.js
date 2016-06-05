@@ -9,6 +9,7 @@ const API_PORT = 3000;
 let DB_PROJECTS = require('./db/projects.json');
 let DB_USERS = require('./db/users.json');
 const _findUserByLogin = login => DB_USERS.find(u => u.login === login);
+const _findUserBySlackId = slackId => DB_USERS.find(u => u.slackId === slackId);
 const _createUser = user => DB_USERS.push(user);
 const _updateUser =  newUser => {
   const userIndex = DB_USERS.findIndex(u => u.login === newUser.login);
@@ -41,7 +42,10 @@ const PROJECT_CREATION  = {
 
 app.use(cors());
 app.use(bodyParser.json());
-
+app.use(function timeLog(req, res, next) {
+  console.log('Time: ', Date.now());
+  next();
+});
 
 // Load all the projects
 app.get('/projects', (req, res) => {
@@ -89,16 +93,26 @@ app.post('/user/login', (req, res) => {
      res.status(500).send(`Pas d'utilisateur avec le login renseigné: ${login}`);
    }
 });
-
+app.get('/user/login/slack/:slackId', (req, res) => {
+    console.log('slack id route');
+   const slackId = req.params.slackId;
+   const user = _findUserBySlackId(slackId);
+   if(user){
+      res.json(user);
+   }else {
+     res.status(500).send(`Pas d'utilisateur avec l'identifiant slack renseigné: ${slackId}`);
+   }
+});
 app.get('/users', (req, res) => {
       res.json(DB_USERS);
 });
 
 app.post('/user', (req, res) => {
    const login = req.body.login;
+   const slackId = req.body.login;
    const user = _findUserByLogin(login);
    if(!user){
-      const newUser = {login, records: []};
+      const newUser = {login, records: [], slackId};
       _createUser(newUser);
       res.json(newUser);
    }else {
@@ -135,5 +149,4 @@ const launchServer = () => {
         console.log(`API listening on port ${API_PORT}`);
     });
 }
-
 launchServer();
