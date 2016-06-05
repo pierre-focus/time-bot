@@ -1,0 +1,3 @@
+rootProject.name = 'TimeBotMobile'
+
+include ':app'
